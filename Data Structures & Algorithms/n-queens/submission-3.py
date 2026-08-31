@@ -1,0 +1,40 @@
+class Solution:
+    def solveNQueens(self, n: int) -> List[List[str]]:
+        if n == 1:
+            return [["Q"]]
+        diagonals = set()
+        anti_diagonal = set()
+        rows = [ False for i in range(n)]
+        cols = [ False for i in range(n)]
+
+        output = []
+        template = [["." for j in range(n)] for i in range(n)]
+    
+        def alternate_state(i, j):
+            if template[i][j] == "Q":
+                template[i][j] = "."
+                rows[i] = False
+                cols[j] = False
+                diagonals.remove(n + (i - j))
+                anti_diagonal.remove(i + j)
+            else:
+                rows[i] = True
+                cols[j] = True
+                diagonals.add(n + (i - j))
+                anti_diagonal.add(i + j)
+                template[i][j] = "Q"
+
+        def backtrack(i):
+            if i == n:
+                output.append([ "".join(row) for row in template])
+                return
+            for j in range(n):
+                if (rows[i] or cols[j] or n + (i - j) in diagonals or i + j in anti_diagonal):
+                    continue
+
+                alternate_state(i, j)
+                backtrack(i + 1)
+                alternate_state(i, j)
+    
+        backtrack(0)
+        return output
